@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="36dp"
+    android:orientation="horizontal"
+    android:background="@drawable/background"
+    android:gravity="bottom">
+
+    <Button
+        android:text="Sign Up"
+        android:onClick="signup"
+        style="@style/button"/>
+
+    <Button
+        android:text="Log In"
+        android:onClick="login"
+        style="@style/button"/>
+
+</LinearLayout>
