@@ -1,35 +1,36 @@
 package com.example.travy;
 
 import android.app.ActionBar;
-import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.view.View;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentActivity;
 
-public class MainActivity extends Activity {
+public class MainActivity extends FragmentActivity {
 
-    ActionBar.Tab listTab, mapTab;
+    ActionBar actionBar;
     Fragment listFragmentTab = new ListFragmentTab();
     Fragment mapFragmentTab = new MapFragmentTab();
 
+    public static FragmentManager fragmentManager;
+
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActionBar actionBar = getActionBar();
+        fragmentManager = getSupportFragmentManager();
+
+        actionBar = getActionBar();
+
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setDisplayShowHomeEnabled(false);
         actionBar.setDisplayShowTitleEnabled(false);
 
-        listTab = actionBar.newTab().setText("List");
-        listTab.setTabListener(new TabListener(listFragmentTab));
+        actionBar.addTab(actionBar.newTab().setText("Map").setTabListener(new TabListener(mapFragmentTab)));
+        actionBar.addTab(actionBar.newTab().setText("List").setTabListener(new TabListener(listFragmentTab)));
 
-        mapTab = actionBar.newTab().setText("Map");
-        mapTab.setTabListener(new TabListener(mapFragmentTab));
-
-        actionBar.addTab(listTab);
-        actionBar.addTab(mapTab);
     }
 
     public void onBackPressed() {
@@ -38,4 +39,5 @@ public class MainActivity extends Activity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
 }

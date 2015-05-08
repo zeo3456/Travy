@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Travy</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="prompt_location">Location:</string>
 </resources>
