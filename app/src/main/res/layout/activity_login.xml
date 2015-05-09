@@ -17,12 +17,12 @@
         android:src="@drawable/back" />
 
     <EditText
-        android:id="@+id/emailaddress"
+        android:id="@+id/LIemailaddress"
         style="@style/textfield"
         android:hint="E-mail address"></EditText>
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/LIpassword"
         style="@style/textfield"
         android:layout_marginBottom="35dp"
         android:hint="Password"
