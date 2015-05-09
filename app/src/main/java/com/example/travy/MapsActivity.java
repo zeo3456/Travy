@@ -1,17 +1,26 @@
 package com.example.travy;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.GeoDataApi;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -24,12 +33,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.travy.model.DataSource;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 //import com.google.android.gms.location.places.Place;
 
 
-public class MapsActivity extends FragmentActivity {
+public class MapsActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private static final double coli_lat = 43.084994;
@@ -37,21 +47,30 @@ public class MapsActivity extends FragmentActivity {
     private static final float DEFAULTZOOM = 15;
     Marker marker;
     // AutoCompleteTextView actv;
+    private static final String TAG = "Show Place";
     private DataSource source;
     protected GoogleApiClient mGoogleApiClient;
-
+    private static final LatLng COLI = new LatLng(43.084994,-89.400412);
+    private ArrayList<String> placeIdList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //Remove title bar
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        
+
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
         gotoLocation(coli_lat, coli_lng);
+        placeIdList = new ArrayList<String>();
+        placeIdList.add("ChIJ4zGFAZpYwokRGUGph3Mf37k");
+        placeIdList.add("ChIJb8Jg9pZYwokR-qHGtvSkLzs");
+        placeIdList.add("ChIJKxDbe_lYwokRVf__s8CPn-o");
         mMap.setMyLocationEnabled(true);//the button that enables the current location
-        /*mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,0,this).addApi(Places.GEO_DATA_API).build();
+        //Marker coli = mMap.addMarker(new MarkerOptions().position(COLI));
+        showMultipleMarker(placeIdList);
+   /*mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -88,6 +107,32 @@ public class MapsActivity extends FragmentActivity {
         User u = users.get(0);
         Toast.makeText(this,u.getEmail(),Toast.LENGTH_SHORT).show();*/
     }
+    private void showMultipleMarker(ArrayList<String> places){
+        for(int i =0; i<places.size();i++) {
+            PendingResult<PlaceBuffer> placeBuffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeIdList.get(i));
+            placeBuffer.setResultCallback(mPlaceCallback);
+        }
+    }
+    private ResultCallback<PlaceBuffer> mPlaceCallback
+            = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                // Request did not complete successfully
+                Log.e(TAG, "Place query did not complete. Error: " + places.getStatus().toString());
+
+                return;
+            }
+            // Get the Place object from the buffer.
+            final Place place = places.get(0);
+
+            // Format details of the place for display and show it in a TextView.
+            Marker cur = mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
+//////TODO: save place
+
+            Log.i(TAG, "Place details received: " + place.getName());
+        }
+    };
 /*
     private void showInfo() {
         CustomedPlace p = new CustomedPlace();
@@ -184,6 +229,12 @@ public class MapsActivity extends FragmentActivity {
         LatLng latlng = new LatLng(lat, lng);
         CameraUpdate update = CameraUpdateFactory.newLatLng(latlng);
         mMap.moveCamera(update);
+    }
+
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 /*
     @Override
