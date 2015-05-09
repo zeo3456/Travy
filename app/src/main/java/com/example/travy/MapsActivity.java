@@ -26,6 +26,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -70,16 +71,17 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
         mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,0,this).addApi(Places.GEO_DATA_API).build();
         //Marker coli = mMap.addMarker(new MarkerOptions().position(COLI));
         showMultipleMarker(placeIdList);
-   /*mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+/*
+         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
             @Override
             public boolean onMarkerClick(Marker marker) {
-                showInfo();
+                marker.showInfoWindow();
                 return true;
             }
         });
         //drop pin function
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+       /* mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng ll) {
                 Geocoder gc = new Geocoder(MapsActivity.this);
@@ -100,17 +102,14 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
                 MapsActivity.this.setMarker(add.getLocality(), premise, ll.latitude, ll.longitude);
 
             }
-        });
+        });*/
+}
 
-        source = new DataSource(this);
-        List<User> users = source.findAllUser();
-        User u = users.get(0);
-        Toast.makeText(this,u.getEmail(),Toast.LENGTH_SHORT).show();*/
-    }
     private void showMultipleMarker(ArrayList<String> places){
         for(int i =0; i<places.size();i++) {
             PendingResult<PlaceBuffer> placeBuffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeIdList.get(i));
             placeBuffer.setResultCallback(mPlaceCallback);
+
         }
     }
     private ResultCallback<PlaceBuffer> mPlaceCallback
@@ -127,20 +126,19 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
             final Place place = places.get(0);
 
             // Format details of the place for display and show it in a TextView.
-            Marker cur = mMap.addMarker(new MarkerOptions().position(place.getLatLng()));
+            Marker cur = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(String.valueOf(place.getName())).snippet(String.valueOf(place.getAddress())));
 //////TODO: save place
-
+            CameraUpdate update = CameraUpdateFactory.newLatLng(place.getLatLng());
+            mMap.moveCamera(update);
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
+            //CameraPosition cameraPosition = new CameraPosition.Builder().target(place.getLatLng()).zoom(12).build();
+            //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             Log.i(TAG, "Place details received: " + place.getName());
+            places.close();
         }
     };
-/*
-    private void showInfo() {
-        CustomedPlace p = new CustomedPlace();
-        Intent intent = new Intent(this, ClickMarkerActivity.class);
-        intent.putExtra("memo", "HEllo World");
-        startActivityForResult(intent, 1001);
-    }
 
+/*
     public void geoLocate(View v) throws IOException {
         EditText et = (EditText) findViewById(R.id.editText1);
         String location = et.getText().toString();
