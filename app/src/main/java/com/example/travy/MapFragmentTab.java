@@ -1,7 +1,6 @@
 package com.example.travy;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.widget.RelativeLayout;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -19,6 +19,12 @@ public class MapFragmentTab extends Fragment {
     private static View view;
     private static GoogleMap mMap;
     private static Double latitude, longitude;
+    private CameraPosition cp;
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,11 +74,22 @@ public class MapFragmentTab extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if (mMap != null) {
+            cp = mMap.getCameraPosition();
+            MainActivity.fragmentManager.beginTransaction().remove(MainActivity.fragmentManager.findFragmentById(R.id.map)).commit();
+            mMap = null;
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        if (mMap == null) {
-            mMap = ((SupportMapFragment) MainActivity.fragmentManager
-                    .findFragmentById(R.id.map)).getMap();
+        setUpMapIfNeeded();
+        if (cp != null) {
+            mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cp));
+            cp = null;
         }
     }
 
@@ -80,8 +97,7 @@ public class MapFragmentTab extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         if (mMap != null) {
-            MainActivity.fragmentManager.beginTransaction()
-                    .remove(MainActivity.fragmentManager.findFragmentById(R.id.map)).commit();
+            MainActivity.fragmentManager.beginTransaction().remove(MainActivity.fragmentManager.findFragmentById(R.id.map)).commit();
             mMap = null;
         }
     }
