@@ -30,7 +30,7 @@ public class LoginActivity extends Activity {
     }
 
     public void login(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, TripActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }

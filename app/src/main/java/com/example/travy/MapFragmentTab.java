@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -32,9 +31,10 @@ public class MapFragmentTab extends Fragment {
         if (container == null) {
             return null;
         }
-        view = (RelativeLayout) inflater.inflate(R.layout.fragment_map, container, false);
+        view = inflater.inflate(R.layout.fragment_map, container, false);
         latitude = 43.077047;
-        longitude = -89.401225;;
+        longitude = -89.401225;
+        ;
         setUpMapIfNeeded(); // For setting up the MapFragment
         return view;
     }
@@ -101,4 +101,5 @@ public class MapFragmentTab extends Fragment {
             mMap = null;
         }
     }
+
 }
