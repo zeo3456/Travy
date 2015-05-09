@@ -105,8 +105,4 @@ public class TripActivity extends ListActivity {
         return super.onContextItemSelected(item);
     }
 
-    public void trip_detail() {
-
-    }
-
 }
