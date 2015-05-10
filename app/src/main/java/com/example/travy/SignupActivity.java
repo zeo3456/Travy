@@ -11,6 +11,8 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.travy.model.DataSource;
+import com.example.travy.model.Trip;
 import com.example.travy.model.User;
 
 import java.io.BufferedWriter;
@@ -50,9 +52,24 @@ public class SignupActivity extends Activity {
         EditText inputOfPW = (EditText) findViewById(R.id.password);
         EditText inputOfFirstName = (EditText) findViewById(R.id.firstname);
         EditText inputOfLastName = (EditText) findViewById(R.id.lastname);
+
         String myEmail = inputOfAdd.getText().toString();
         String myName = inputOfFirstName.getText().toString() + " " + inputOfLastName.getText().toString();
         String myPW = inputOfPW.getText().toString();
+        if(inputOfFirstName.getText().toString().isEmpty()||inputOfLastName.getText().toString().isEmpty() ||myPW.isEmpty() ||myEmail.isEmpty()){
+            NotExistSoGoOn = false;
+            new AlertDialog.Builder(this)
+                    .setTitle("Invalid Field")
+                    .setMessage("You must fill in all fields, or feel my wrath!")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
         int id = 0;
 
         if (Utility.FindExistUser(Utility.GetFilePlace("UserName.txt"), myEmail)) {
@@ -117,6 +134,7 @@ public class SignupActivity extends Activity {
                 Utility.AddToFile(file, info);
                 User.addUser(myEmail, id, myName, myPW);
                 LoginActivity.currentUser = myEmail;
+                DataSource.clearTrip();
             } catch (IOException e) {
                 Log.w("!!!!", e.getMessage(), e);
                 Toast.makeText(view.getContext(), e.getMessage() + " Unable to write to external storage.",

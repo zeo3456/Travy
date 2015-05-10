@@ -53,7 +53,20 @@ public class LoginActivity extends Activity {
         EditText inputOfPW   = (EditText)findViewById(R.id.LIpassword);
         String myEmail = inputOfAdd.getText().toString();
         String myPW = inputOfPW.getText().toString();
+        if(myPW.isEmpty() ||myEmail.isEmpty()){
+            ExistSoGoOn = false;
+            new AlertDialog.Builder(this)
+                    .setTitle("Invalid Field")
+                    .setMessage("You must fill in all fields, or feel my wrath!")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
 
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
+        }
         if(!Utility.FindExistUser(Utility.GetFilePlace("UserName.txt"), myEmail))
         {
             ExistSoGoOn = false;
