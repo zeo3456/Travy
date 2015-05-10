@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.travy.model.DataSource;
-import com.example.travy.model.Trip;
 import com.example.travy.model.User;
 
 import java.io.BufferedWriter;
@@ -32,7 +31,7 @@ public class SignupActivity extends Activity {
         setContentView(R.layout.activity_signup);
     }
 
-    public void back(View view){
+    public void back(View view) {
         Intent intent = new Intent(this, FirstActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.back_in, R.anim.back_out);
@@ -56,7 +55,7 @@ public class SignupActivity extends Activity {
         String myEmail = inputOfAdd.getText().toString();
         String myName = inputOfFirstName.getText().toString() + " " + inputOfLastName.getText().toString();
         String myPW = inputOfPW.getText().toString();
-        if(inputOfFirstName.getText().toString().isEmpty()||inputOfLastName.getText().toString().isEmpty() ||myPW.isEmpty() ||myEmail.isEmpty()){
+        if (inputOfFirstName.getText().toString().isEmpty() || inputOfLastName.getText().toString().isEmpty() || myPW.isEmpty() || myEmail.isEmpty()) {
             NotExistSoGoOn = false;
             new AlertDialog.Builder(this)
                     .setTitle("Invalid Field")
@@ -92,9 +91,6 @@ public class SignupActivity extends Activity {
                     .show();
         }
 
-
-
-
         if (NotExistSoGoOn) {
             id = (int) (Math.random() * 100);
 //        try {
@@ -126,7 +122,6 @@ public class SignupActivity extends Activity {
                         Toast.LENGTH_LONG).show();
             }
 
-
             //add the user
             File file;
             try {
@@ -141,8 +136,8 @@ public class SignupActivity extends Activity {
                         Toast.LENGTH_LONG).show();
             }
 
-
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-        }}
+        }
+    }
 }

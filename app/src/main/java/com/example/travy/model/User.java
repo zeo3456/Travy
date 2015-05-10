@@ -1,34 +1,34 @@
 package com.example.travy.model;
 
-
 import java.util.HashMap;
 import java.util.Set;
 
-/**
- * Created by Hao on 5/8/2015.
- */
 public class User {
-    private static HashMap<String, String[]> ListOfUserName = new HashMap<String,   String[]>();
+    private static HashMap<String, String[]> ListOfUserName = new HashMap<String, String[]>();
 
-    public static void addUser(String NewUserEmail, int id, String NewUserName, String PW){
-        String[] info = new  String[3];
-        info[0] = id +"";
+    public static void addUser(String NewUserEmail, int id, String NewUserName, String PW) {
+        String[] info = new String[3];
+        info[0] = id + "";
         info[1] = NewUserName;
         info[2] = PW;
         ListOfUserName.put(NewUserEmail, info);
     }
-    public static boolean CheckExist(String NewUserName)  {
+
+    public static boolean CheckExist(String NewUserName) {
         return ListOfUserName.containsKey(NewUserName);
     }
-    public static Set<String> getUser(){
+
+    public static Set<String> getUser() {
         return ListOfUserName.keySet();
     }
-    public static String getPW(String key){
+
+    public static String getPW(String key) {
         String[] info = ListOfUserName.get(key);
         return info[2];
     }
-    public static String getID(String key){
-        String [] info =ListOfUserName.get(key);
+
+    public static String getID(String key) {
+        String[] info = ListOfUserName.get(key);
         return info[0];
     }
 

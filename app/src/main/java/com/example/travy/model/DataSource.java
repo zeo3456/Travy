@@ -5,17 +5,20 @@ import java.util.List;
 
 public class DataSource {
     static List<Trip> triplist = new ArrayList<Trip>();
-    public static boolean getSize(){
+
+    public static boolean getSize() {
         return triplist.isEmpty();
     }
-    public static void clearTrip(){
+
+    public static void clearTrip() {
         triplist = new ArrayList<Trip>();
     }
 
-    public static void addtrip(Trip e){
+    public static void addtrip(Trip e) {
         triplist.add(e);
     }
-    public List<Trip> findAllTrip(){
+
+    public List<Trip> findAllTrip() {
 
 //        Trip t1 = new Trip(1, "New York City");
 //        Trip t2 = new Trip(2, "Beijing");
@@ -24,8 +27,9 @@ public class DataSource {
 //        triplist.add(t2);
         return triplist;
     }
+
     //remove function actually doesn't work, rebuild needed
-    public void remove(Trip trip){
+    public void remove(Trip trip) {
         triplist.remove(trip);
     }
 }

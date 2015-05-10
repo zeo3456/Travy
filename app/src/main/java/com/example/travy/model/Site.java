@@ -4,9 +4,9 @@ public class Site {
     private String placeId;
     //private String memo;
 
-    public Site(String placeId){
+    public Site(String placeId) {
         this.placeId = placeId;
-       // this.memo = memo;
+        // this.memo = memo;
     }
 
     public String getPlaceId() {

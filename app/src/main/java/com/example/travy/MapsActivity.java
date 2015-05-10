@@ -39,8 +39,9 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
     private static final String TAG = "Show Place";
     private DataSource source;
     protected GoogleApiClient mGoogleApiClient;
-    private static final LatLng COLI = new LatLng(43.084994,-89.400412);
+    private static final LatLng COLI = new LatLng(43.084994, -89.400412);
     private ArrayList<String> placeIdList;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +57,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
         placeIdList.add("ChIJb8Jg9pZYwokR-qHGtvSkLzs");
         placeIdList.add("ChIJKxDbe_lYwokRVf__s8CPn-o");
         mMap.setMyLocationEnabled(true);//the button that enables the current location
-        mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this,0,this).addApi(Places.GEO_DATA_API).build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, 0, this).addApi(Places.GEO_DATA_API).build();
         //Marker coli = mMap.addMarker(new MarkerOptions().position(COLI));
         showMultipleMarker(placeIdList);
 /*
@@ -91,15 +92,16 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
 
             }
         });*/
-}
+    }
 
-    private void showMultipleMarker(ArrayList<String> places){
-        for(int i =0; i<places.size();i++) {
+    private void showMultipleMarker(ArrayList<String> places) {
+        for (int i = 0; i < places.size(); i++) {
             PendingResult<PlaceBuffer> placeBuffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeIdList.get(i));
             placeBuffer.setResultCallback(mPlaceCallback);
 
         }
     }
+
     private ResultCallback<PlaceBuffer> mPlaceCallback
             = new ResultCallback<PlaceBuffer>() {
         @Override
@@ -126,30 +128,30 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
         }
     };
 
-/*
-    public void geoLocate(View v) throws IOException {
-        EditText et = (EditText) findViewById(R.id.editText1);
-        String location = et.getText().toString();
-        if (location.length() == 0) {
-            Toast.makeText(this, "Please enter a location", Toast.LENGTH_SHORT).show();
-            return;
+    /*
+        public void geoLocate(View v) throws IOException {
+            EditText et = (EditText) findViewById(R.id.editText1);
+            String location = et.getText().toString();
+            if (location.length() == 0) {
+                Toast.makeText(this, "Please enter a location", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            hideSoftKeyboard(v);
+            Geocoder gc = new Geocoder(this);
+            List<Address> list = gc.getFromLocationName(location, 1);
+            Address add = list.get(0);
+            String locality = add.getLocality();
+            double lat = add.getLatitude();
+            double lng = add.getLongitude();
+            gotoLocation(lat, lng);
+            setMarker(locality, add.getAdminArea(), lat, lng);
         }
-        hideSoftKeyboard(v);
-        Geocoder gc = new Geocoder(this);
-        List<Address> list = gc.getFromLocationName(location, 1);
-        Address add = list.get(0);
-        String locality = add.getLocality();
-        double lat = add.getLatitude();
-        double lng = add.getLongitude();
-        gotoLocation(lat, lng);
-        setMarker(locality, add.getAdminArea(), lat, lng);
-    }
 
-    private void hideSoftKeyboard(View v) {
-        InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-    }
-*/
+        private void hideSoftKeyboard(View v) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        }
+    */
     @Override
     protected void onResume() {
         super.onResume();

@@ -20,9 +20,11 @@ import java.util.Scanner;
 
 public class LoginActivity extends Activity {
     public static String currentUser = "";
+
     public static String getCurrentUser() {
         return currentUser;
     }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -49,11 +51,11 @@ public class LoginActivity extends Activity {
         final Intent intent2 = new Intent(this, SignupActivity.class);
         final Intent intent3 = new Intent(this, FirstActivity.class);
         boolean ExistSoGoOn = true;
-        EditText inputOfAdd   = (EditText)findViewById(R.id.LIemailaddress);
-        EditText inputOfPW   = (EditText)findViewById(R.id.LIpassword);
+        EditText inputOfAdd = (EditText) findViewById(R.id.LIemailaddress);
+        EditText inputOfPW = (EditText) findViewById(R.id.LIpassword);
         String myEmail = inputOfAdd.getText().toString();
         String myPW = inputOfPW.getText().toString();
-        if(myPW.isEmpty() ||myEmail.isEmpty()){
+        if (myPW.isEmpty() || myEmail.isEmpty()) {
             ExistSoGoOn = false;
             new AlertDialog.Builder(this)
                     .setTitle("Invalid Field")
@@ -67,8 +69,7 @@ public class LoginActivity extends Activity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-        if(!Utility.FindExistUser(Utility.GetFilePlace("UserName.txt"), myEmail))
-        {
+        if (!Utility.FindExistUser(Utility.GetFilePlace("UserName.txt"), myEmail)) {
             ExistSoGoOn = false;
             new AlertDialog.Builder(this)
                     .setTitle("Not Exist User")
@@ -89,7 +90,7 @@ public class LoginActivity extends Activity {
         }
         currentUser = myEmail;
         boolean PWcorrect = true;
-        if(ExistSoGoOn) {
+        if (ExistSoGoOn) {
             //load user information from database
             File file = Utility.GetFilePlace("LogIn.txt");
             Scanner in = null;
@@ -102,14 +103,14 @@ public class LoginActivity extends Activity {
             while (in.hasNext()) {
                 allinfo += in.next() + " ";
             }
-            String [] EachUser = allinfo.split(" & ");
-            for(int i = 0 ; i< EachUser.length;i++){
-                if(EachUser[i].trim().isEmpty()) continue;
-                String [] EachUserInfo = EachUser[i].split(" ");
+            String[] EachUser = allinfo.split(" & ");
+            for (int i = 0; i < EachUser.length; i++) {
+                if (EachUser[i].trim().isEmpty()) continue;
+                String[] EachUserInfo = EachUser[i].split(" ");
                 User.addUser(EachUserInfo[0], Integer.valueOf(EachUserInfo[4]), EachUserInfo[2] + " " + EachUserInfo[3], EachUserInfo[1]);
             }
             String correctPW = User.getPW(myEmail);
-            if(!myPW.equals(correctPW)) {
+            if (!myPW.equals(correctPW)) {
                 PWcorrect = false;
                 new AlertDialog.Builder(this)
                         .setTitle("PW Wrong")
@@ -129,8 +130,8 @@ public class LoginActivity extends Activity {
                         .show();
             }
 
-            if(PWcorrect) {
-                if(!DataSource.getSize()){
+            if (PWcorrect) {
+                if (!DataSource.getSize()) {
                     DataSource.clearTrip();
                 }
                 //load trips
@@ -141,18 +142,17 @@ public class LoginActivity extends Activity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                String [] EachTrip = allinfo2.split(" & ");
-                for(int i = 0 ; i< EachTrip.length;i++){
-                    if(EachTrip[i].trim().isEmpty()) continue;
-                    String [] EachTripInfo = EachTrip[i].split(" ");
+                String[] EachTrip = allinfo2.split(" & ");
+                for (int i = 0; i < EachTrip.length; i++) {
+                    if (EachTrip[i].trim().isEmpty()) continue;
+                    String[] EachTripInfo = EachTrip[i].split(" ");
                     int UserId = Integer.valueOf(EachTripInfo[0]);
 
                     String TripName = EachTripInfo[1];
-                    Trip t = new Trip(UserId,TripName);
-                    if(UserId ==  Integer.valueOf(User.getID(LoginActivity.getCurrentUser()))){
+                    Trip t = new Trip(UserId, TripName);
+                    if (UserId == Integer.valueOf(User.getID(LoginActivity.getCurrentUser()))) {
                         DataSource.addtrip(t);
-                    }
-                    else{
+                    } else {
 
                     }
                 }

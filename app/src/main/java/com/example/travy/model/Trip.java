@@ -7,11 +7,13 @@ public class Trip {
 
     private String title;
     private ArrayList<Site> siteList;
-    public Trip(int id,String title) {
+
+    public Trip(int id, String title) {
         this.title = title;
         this.siteList = new ArrayList<Site>();
         this.id = id;
     }
+
     public String getTitle() {
         return title;
     }

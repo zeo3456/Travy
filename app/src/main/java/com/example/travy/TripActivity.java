@@ -1,11 +1,8 @@
 package com.example.travy;
 
-import android.app.AlertDialog;
 import android.app.ListActivity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,6 +31,7 @@ public class TripActivity extends ListActivity {
     ListView listView;
     private static final String TAG = "NEW BUTTON TEST";
     public static String SelectedTripName;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

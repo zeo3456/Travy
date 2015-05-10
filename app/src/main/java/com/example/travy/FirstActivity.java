@@ -17,13 +17,13 @@ public class FirstActivity extends Activity {
         setContentView(R.layout.activity_first);
     }
 
-    public void signup(View view){
+    public void signup(View view) {
         Intent intent = new Intent(this, SignupActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
-    public void login(View view){
+    public void login(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);

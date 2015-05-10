@@ -1,7 +1,5 @@
 package com.example.travy;
 
-import android.app.Activity;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -77,9 +75,6 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
         refreshSiteList();
 
 
-
-
-
         // Retrieve the AutoCompleteTextView that will display Place suggestions.
         mAutocompleteView = (AutoCompleteTextView)
                 findViewById(R.id.autocomplete_places);
@@ -103,14 +98,15 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
     private void refreshSiteList() {
         siteList = siteDataSource.findAllSite();
         convertIdtoPlaceName(siteList);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,placeNameList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, placeNameList);
         listView.setAdapter(adapter);
 
     }
+
     //convert list of place id to place name for listView
-    private void convertIdtoPlaceName(List<Site> sites){
-        for(Site s:sites){
-            PendingResult<PlaceBuffer> buffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient,s.getPlaceId());
+    private void convertIdtoPlaceName(List<Site> sites) {
+        for (Site s : sites) {
+            PendingResult<PlaceBuffer> buffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient, s.getPlaceId());
             buffer.setResultCallback(mPlaceCallBack);
         }
     }
@@ -119,8 +115,8 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
     private ResultCallback<PlaceBuffer> mPlaceCallBack = new ResultCallback<PlaceBuffer>() {
         @Override
         public void onResult(PlaceBuffer places) {
-            if(!places.getStatus().isSuccess()){
-                Log.e("PLACE BUFFER","WE FAILED");
+            if (!places.getStatus().isSuccess()) {
+                Log.e("PLACE BUFFER", "WE FAILED");
                 return;
             }
             final Place place = places.get(0);
