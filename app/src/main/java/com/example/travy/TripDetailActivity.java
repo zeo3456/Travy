@@ -67,8 +67,6 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
         }
 
         setContentView(R.layout.activity_tripdetail);
-
-
         siteDataSource = new SiteSource();
         listView = (ListView) findViewById(android.R.id.list);
         placeNameList = new ArrayList<String>();
@@ -89,6 +87,7 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
         // the entire world.
         mAdapter = new PlaceAutocompleteAdapter(this, android.R.layout.simple_list_item_1,
                 BOUNDS_GREATER_SYDNEY, null);
+
         mAutocompleteView.setAdapter(mAdapter);
 
         // Set up the 'clear text' button that clears the text in the autocomplete view
@@ -100,7 +99,6 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
         convertIdtoPlaceName(siteList);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, placeNameList);
         listView.setAdapter(adapter);
-
     }
 
     //convert list of place id to place name for listView
@@ -110,7 +108,6 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
             buffer.setResultCallback(mPlaceCallBack);
         }
     }
-
 
     private ResultCallback<PlaceBuffer> mPlaceCallBack = new ResultCallback<PlaceBuffer>() {
         @Override

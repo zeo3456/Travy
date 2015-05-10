@@ -22,7 +22,7 @@ public class DataSource {
 
 //        Trip t1 = new Trip(1, "New York City");
 //        Trip t2 = new Trip(2, "Beijing");
-//
+
 //        triplist.add(t1);
 //        triplist.add(t2);
         return triplist;
