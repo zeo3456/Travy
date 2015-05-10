@@ -27,7 +27,10 @@ public class User {
         String[] info = ListOfUserName.get(key);
         return info[2];
     }
-
+    public static String getID(String key){
+        String [] info =ListOfUserName.get(key);
+        return info[0];
+    }
 
 //    public static void PrintOutList(){
 //        String toPrint= "";

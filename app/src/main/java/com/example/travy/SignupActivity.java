@@ -44,7 +44,7 @@ public class SignupActivity extends Activity {
 
     public void signup(View view) {
         boolean NotExistSoGoOn = true;
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, TripActivity.class);
         final Intent intent2 = new Intent(this, LoginActivity.class);
         EditText inputOfAdd = (EditText) findViewById(R.id.emailaddress);
         EditText inputOfPW = (EditText) findViewById(R.id.password);
@@ -74,19 +74,19 @@ public class SignupActivity extends Activity {
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
         }
-        else{
-            id = (int)(Math.random()*100 );
-            User.addUser(myEmail, id, myName, myPW);
-        }
 
-        if (NotExistSoGoOn){
+
+
+
+        if (NotExistSoGoOn) {
+            id = (int) (Math.random() * 100);
 //        try {
 //            myPW = SimpleCrypto.encrypt("travy", myPW);
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //        }
 
-            String info = myEmail + " " + myPW + " " + myName + " " + id ;
+            String info = myEmail + " " + myPW + " " + myName + " " + id;
 
             //add to the user list
             File file2;
@@ -114,7 +114,9 @@ public class SignupActivity extends Activity {
             File file;
             try {
                 file = Utility.GetFilePlace("LogIn.txt");
-                Utility.AddToFile(file,info);
+                Utility.AddToFile(file, info);
+                User.addUser(myEmail, id, myName, myPW);
+                LoginActivity.currentUser = myEmail;
             } catch (IOException e) {
                 Log.w("!!!!", e.getMessage(), e);
                 Toast.makeText(view.getContext(), e.getMessage() + " Unable to write to external storage.",
@@ -124,8 +126,5 @@ public class SignupActivity extends Activity {
 
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-
-        }
-    }
-
+        }}
 }

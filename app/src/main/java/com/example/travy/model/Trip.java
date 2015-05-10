@@ -22,6 +22,6 @@ public class Trip {
 
     @Override
     public String toString() {
-        return "Trip" + " id = " + id + ", title = " + title;
+        return title;
     }
 }

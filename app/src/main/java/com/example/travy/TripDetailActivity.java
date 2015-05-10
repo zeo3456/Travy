@@ -1,6 +1,7 @@
 package com.example.travy;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -12,10 +13,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.travy.model.Site;
+import com.example.travy.model.SiteSource;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -25,6 +30,9 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TripDetailActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     /**
@@ -39,7 +47,14 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
     private TextView mPlaceDetailsText;
 
     private static final LatLngBounds BOUNDS_GREATER_SYDNEY = new LatLngBounds(
-            new LatLng(-34.041458, 150.790100), new LatLng(-33.682247, 151.383362));
+            new LatLng(41.00, -89.00), new LatLng(42.00, -88.00));
+
+    //connect with model:
+    List<Site> siteList;
+    ListView listView;
+    private SiteSource siteDataSource;
+    ArrayList<String> placeNameList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +69,16 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
         }
 
         setContentView(R.layout.activity_tripdetail);
+
+
+        siteDataSource = new SiteSource();
+        listView = (ListView) findViewById(android.R.id.list);
+        placeNameList = new ArrayList<String>();
+        refreshSiteList();
+
+
+
+
 
         // Retrieve the AutoCompleteTextView that will display Place suggestions.
         mAutocompleteView = (AutoCompleteTextView)
@@ -74,6 +99,36 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
         // Set up the 'clear text' button that clears the text in the autocomplete view
 
     }
+
+    private void refreshSiteList() {
+        siteList = siteDataSource.findAllSite();
+        convertIdtoPlaceName(siteList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,placeNameList);
+        listView.setAdapter(adapter);
+
+    }
+    //convert list of place id to place name for listView
+    private void convertIdtoPlaceName(List<Site> sites){
+        for(Site s:sites){
+            PendingResult<PlaceBuffer> buffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient,s.getPlaceId());
+            buffer.setResultCallback(mPlaceCallBack);
+        }
+    }
+
+
+    private ResultCallback<PlaceBuffer> mPlaceCallBack = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if(!places.getStatus().isSuccess()){
+                Log.e("PLACE BUFFER","WE FAILED");
+                return;
+            }
+            final Place place = places.get(0);
+            placeNameList.add(String.valueOf(place.getName()));
+            Log.e("ADD PLACE NAME TO LIST", String.valueOf(place.getName()));
+            places.close();
+        }
+    };
 
     /**
      * Listener that handles selections from suggestions from the AutoCompleteTextView that

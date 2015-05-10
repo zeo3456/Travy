@@ -8,9 +8,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
-/**
- * Created by Hao on 5/8/2015.
- */
 public class Utility {
     public static File GetFilePlace(String filename)  {
         java.io.File root = new java.io.File(Environment
@@ -81,8 +78,20 @@ public class Utility {
         out.write(toPrint);
         out.close();
 
-
-
         return true;
+    }
+    public static String GetAllInfoFromFile(File file)throws IOException{
+        Scanner in = null;
+        try {
+            in = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        String tr = "";
+        while (in.hasNext()) {
+            tr += in.next() + " ";
+        }
+
+        return tr;
     }
 }

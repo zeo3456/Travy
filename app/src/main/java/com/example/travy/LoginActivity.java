@@ -9,10 +9,13 @@ import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 
+import com.example.travy.model.DataSource;
+import com.example.travy.model.Trip;
 import com.example.travy.model.User;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class LoginActivity extends Activity {
@@ -42,7 +45,7 @@ public class LoginActivity extends Activity {
     }
 
     public void login(View view) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, TripActivity.class);
         final Intent intent2 = new Intent(this, SignupActivity.class);
         final Intent intent3 = new Intent(this, FirstActivity.class);
         boolean ExistSoGoOn = true;
@@ -114,8 +117,32 @@ public class LoginActivity extends Activity {
             }
 
             if(PWcorrect) {
+                if(!DataSource.getSize()){
+                    DataSource.clearTrip();
+                }
+                //load trips
+                File file2 = Utility.GetFilePlace("TripUser.txt");
+                String allinfo2 = null;
+                try {
+                    allinfo2 = Utility.GetAllInfoFromFile(file2);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                String [] EachTrip = allinfo2.split(" & ");
+                for(int i = 0 ; i< EachTrip.length;i++){
+                    if(EachTrip[i].trim().isEmpty()) continue;
+                    String [] EachTripInfo = EachTrip[i].split(" ");
+                    int UserId = Integer.valueOf(EachTripInfo[0]);
 
+                    String TripName = EachTripInfo[1];
+                    Trip t = new Trip(UserId,TripName);
+                    if(UserId ==  Integer.valueOf(User.getID(LoginActivity.getCurrentUser()))){
+                        DataSource.addtrip(t);
+                    }
+                    else{
 
+                    }
+                }
                 startActivity(intent);
                 overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
             }
