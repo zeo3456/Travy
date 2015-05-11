@@ -10,12 +10,18 @@ public class DataSource {
         return triplist.isEmpty();
     }
 
+    public static void removeTrip(int pos){
+        triplist.remove(pos);
+    }
     public static void clearTrip() {
         triplist = new ArrayList<Trip>();
     }
 
     public static void addtrip(Trip e) {
         triplist.add(e);
+    }
+    public static String getTripName(int pos){
+        return triplist.get(pos).getTitle();
     }
 
     public List<Trip> findAllTrip() {

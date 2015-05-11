@@ -5,6 +5,8 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Window;
 
+import com.example.travy.model.Site;
+import com.example.travy.model.SiteSource;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -40,7 +42,7 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
     private DataSource source;
     protected GoogleApiClient mGoogleApiClient;
     private static final LatLng COLI = new LatLng(43.084994, -89.400412);
-    private ArrayList<String> placeIdList;
+    private ArrayList<String> placeIdList = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +54,15 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
         gotoLocation(coli_lat, coli_lng);
-        placeIdList = new ArrayList<String>();
-        placeIdList.add("ChIJ4zGFAZpYwokRGUGph3Mf37k");
-        placeIdList.add("ChIJb8Jg9pZYwokR-qHGtvSkLzs");
-        placeIdList.add("ChIJKxDbe_lYwokRVf__s8CPn-o");
+        SiteSource siteDataSource = new SiteSource();
+        ArrayList<Site> theList = siteDataSource.returnList();
+        for(int i = 0; i< siteDataSource.getSize();i++){
+            placeIdList.add(theList.get(i).getPlaceId());
+        }
+//        placeIdList =
+//        placeIdList.add("ChIJ4zGFAZpYwokRGUGph3Mf37k");
+//        placeIdList.add("ChIJb8Jg9pZYwokR-qHGtvSkLzs");
+//        placeIdList.add("ChIJKxDbe_lYwokRVf__s8CPn-o");
         mMap.setMyLocationEnabled(true);//the button that enables the current location
         mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, 0, this).addApi(Places.GEO_DATA_API).build();
         //Marker coli = mMap.addMarker(new MarkerOptions().position(COLI));
@@ -117,7 +124,6 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
 
             // Format details of the place for display and show it in a TextView.
             Marker cur = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(String.valueOf(place.getName())).snippet(String.valueOf(place.getAddress())));
-//////TODO: save place
             CameraUpdate update = CameraUpdateFactory.newLatLng(place.getLatLng());
             mMap.moveCamera(update);
             mMap.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);

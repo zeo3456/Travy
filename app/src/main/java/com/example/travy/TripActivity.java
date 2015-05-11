@@ -1,5 +1,6 @@
 package com.example.travy;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,9 +20,12 @@ import android.widget.PopupWindow;
 import android.view.ViewGroup.LayoutParams;
 
 import com.example.travy.model.DataSource;
+import com.example.travy.model.Site;
+import com.example.travy.model.SiteSource;
 import com.example.travy.model.Trip;
 import com.example.travy.model.User;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -31,6 +36,8 @@ public class TripActivity extends ListActivity {
     ListView listView;
     private static final String TAG = "NEW BUTTON TEST";
     public static String SelectedTripName;
+    public static String deletedTrip;
+    public static int posPos = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +50,8 @@ public class TripActivity extends ListActivity {
         refreshDisplay();
 
         registerForContextMenu(getListView());
+
+
     }
 
     public void showPopWindow(View view) {
@@ -88,6 +97,9 @@ public class TripActivity extends ListActivity {
                 popupWindow.setContentView(layoutInflater.inflate(R.layout.new_trip, null, false));
                 final EditText userInput = (EditText) popupView.findViewById(R.id.TPname);
                 String input = userInput.getText().toString();
+                if (input.trim().isEmpty()) {
+                    input = "untitled";
+                }
                 try {
                     Utility.AddToFile(Utility.GetFilePlace("TripUser.txt"), User.getID(LoginActivity.getCurrentUser()) + " " + input);
                     Trip t = new Trip(Integer.valueOf(User.getID(LoginActivity.getCurrentUser())), input);
@@ -130,25 +142,65 @@ public class TripActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
+        SiteSource st = new SiteSource();
+        if (st.getSize() != 0) {
+            st.clearSite();
+        }
         //get the reference to the list item that is selected
         Trip trip = tripList.get(position);
         SelectedTripName = trip.getTitle();
+//        if(SiteSource.getSize()!=0){
+//            SiteSource.clearSite();
+//        }
+        //load Sites
+        String fileName = User.getID(LoginActivity.getCurrentUser()) + SelectedTripName + ".txt";
+        File file = Utility.GetFilePlace(fileName);
+        String allInfo = "";
+        try {
+            allInfo = Utility.GetAllInfoFromFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String[] EachTrip = allInfo.split(" & ");
+        for (int i = 0; i < EachTrip.length; i++) {
+            if (EachTrip[i].trim().isEmpty()) continue;
+            String[] EachTripInfo = EachTrip[i].split(" ");
+            String SiteName = EachTripInfo[0].trim();
+            Site t = new Site(SiteName);
+            st.addSite(t);
+        }
+
         Intent intent = new Intent(this, TripDetailActivity.class);
         startActivityForResult(intent, 1001);
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, v.getId(), 0, "DELETE");
-    }
 
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        if (item.getItemId() == 0)
-            return true;
-        else
-            return false;
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo pos = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        deletedTrip = DataSource.getTripName(pos.position);
+        posPos = pos.position;
+
+        menu.add(1, 1, 1, "Delete");
+
+        menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem clickedItem) {
+                DataSource.removeTrip(posPos);
+                try {
+                    Utility.DeleteFromFile(Utility.GetFilePlace("TripUser.txt"), User.getID(LoginActivity.getCurrentUser()), deletedTrip);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (Utility.GetFilePlace(User.getID(LoginActivity.getCurrentUser()) + deletedTrip + ".txt").exists()) {
+                    Utility.GetFilePlace(User.getID(LoginActivity.getCurrentUser()) + deletedTrip + ".txt").delete();
+                }
+                refreshDisplay();
+                return true;
+            }
+        });
+
     }
 
 }
