@@ -1,5 +1,6 @@
 package com.example.travy;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -8,18 +9,23 @@ import android.support.v4.app.FragmentActivity;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.travy.model.Site;
 import com.example.travy.model.SiteSource;
-import com.example.travy.model.Trip;
 import com.example.travy.model.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -31,12 +37,10 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class TripDetailActivity extends FragmentActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     /**
@@ -46,18 +50,20 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
     protected GoogleApiClient mGoogleApiClient;
     private static final String TAG = "PlaceAutocomplete";
     private PlaceAutocompleteAdapter mAdapter;
-    private SiteSource siteDataSource;
+
     private AutoCompleteTextView mAutocompleteView;
+    // private TextView mPlaceDetailsText;
 
     private static final LatLngBounds BOUNDS_GREATER_SYDNEY = new LatLngBounds(
             new LatLng(41.00, -89.00), new LatLng(42.00, -88.00));
 
-    //connect with model:
-    private List<Site> siteList;
-    private ListView listView;
-    //    private SiteSource siteDataSource;siteDataSource
-    private ArrayList<String> placeNameList;
-    private ArrayList<String> placeNameList2;
+    List<Site> siteList;
+    ListView listView;
+    ArrayList<String> placeNameList;
+
+    public static String deletedSite;
+    public static int posPos = 0;
+    ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,96 +76,81 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
         if (mGoogleApiClient == null) {
             rebuildGoogleApiClient();
         }
-        siteDataSource = new SiteSource();
-        setContentView(R.layout.activity_tripdetail);
-//        siteDataSource = new SiteSource();
-        listView = (ListView) findViewById(android.R.id.list);
-        placeNameList = new ArrayList<String>();
-//        String fileName = User.getID(LoginActivity.getCurrentUser())+TripActivity.SelectedTripName+".txt";
-//        for(int i = 0; i < SiteSource.getSize(); i++){
-//            Log.i("ABC!", "OnCreate has :" + SiteSource.returnList().get(i).getPlaceId());
-//        }
-        refreshSiteList();
 
+        setContentView(R.layout.activity_tripdetail);
+
+        placeNameList = new ArrayList<String>();
+
+        listView = (ListView) findViewById(android.R.id.list);
+        listView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                hideSoftKeyboard(TripDetailActivity.this);
+                return false;
+            }
+        });
+
+        LinearLayout layout = (LinearLayout) findViewById(R.id.layout001);
+        layout.setOnTouchListener(new LinearLayout.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                hideSoftKeyboard(TripDetailActivity.this);
+                return false;
+            }
+        });
 
         // Retrieve the AutoCompleteTextView that will display Place suggestions.
-        mAutocompleteView = (AutoCompleteTextView)
-                findViewById(R.id.autocomplete_places);
+        mAutocompleteView = (AutoCompleteTextView) findViewById(R.id.autocomplete_places);
 
         // Register a listener that receives callbacks when a suggestion has been selected
         mAutocompleteView.setOnItemClickListener(mAutocompleteClickListener);
 
         // Retrieve the TextView that will display details of the selected place.
-//        mPlaceDetailsText = (TextView) findViewById(R.id.place_details);
+        // mPlaceDetailsText = (TextView) findViewById(R.id.place_details);
 
         // Set up the adapter that will retrieve suggestions from the Places Geo Data API that cover
         // the entire world.
-        mAdapter = new PlaceAutocompleteAdapter(this, android.R.layout.simple_list_item_1, BOUNDS_GREATER_SYDNEY, null);
-
+        mAdapter = new PlaceAutocompleteAdapter(this, R.layout.text_view, BOUNDS_GREATER_SYDNEY, null);
         mAutocompleteView.setAdapter(mAdapter);
 
-        // Set up the 'clear text' button that clears the text in the autocomplete view
+        //implement delete
+    }
 
+    private void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         refreshSiteList();
+        registerForContextMenu(listView);
     }
 
     private void refreshSiteList() {
-        siteList = siteDataSource.findAllSite();
-        convertIdtoPlaceName(siteList);
-
-//        File stored = Utility.GetFilePlace("PlaceNameList.txt");
-//        String allInfo = "";
-//        try {
-//            allInfo = Utility.GetAllInfoFromFile(stored);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        allInfo = allInfo.replace("[", "");
-//        allInfo = allInfo.replace("]", "");
-//        String[] EachPlace = allInfo.split(",");
-//        for (int i = 0; i < EachPlace.length; i++) {
-//            placeNameList.add(EachPlace[i].trim());
-//        }
-//        if (Utility.GetFilePlace("PlaceNameList.txt").exists()) {
-//            Utility.GetFilePlace("PlaceNameList.txt").delete();
-//        }
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, placeNameList);
+        siteList = SiteSource.findAllSite();
+        placeNameList = new ArrayList<String>();
+        Log.i("!sitelist", Arrays.toString(siteList.toArray()));
+        //convertIdtoPlaceName(siteList);
+        //Log.i("!placenamelist", Arrays.toString(placeNameList.toArray()));
+        adapter = new ArrayAdapter<String>(this, R.layout.text_view2, placeNameList);
+        for (Site s : siteList) {
+            PendingResult<PlaceBuffer> buffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient, s.getPlaceId());
+            buffer.setResultCallback(mPlaceCallBack);
+        }
         listView.setAdapter(adapter);
 
     }
-
     //convert list of place id to place name for listView
-    private void convertIdtoPlaceName(List<Site> sites) {
-        for (Site s : sites) {
-            PendingResult<PlaceBuffer> buffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient, s.getPlaceId());
+    /*
+    private void convertIdtoPlaceName(List<Site> sites){
+        for(Site s:sites){
+            PendingResult<PlaceBuffer> buffer = Places.GeoDataApi.getPlaceById(mGoogleApiClient,s.getPlaceId());
             buffer.setResultCallback(mPlaceCallBack);
-//                @Override
-//                public void onResult(PlaceBuffer places) {
-//                    if (!places.getStatus().isSuccess()) {
-//                        Log.e("DEBUG", "WE FAILED");
-//                        return;
-//                    }
-//                    final Place place = places.get(0);
-//                    placeNameList2.add(String.valueOf(place.getName()));
-//                    try {
-//                        Utility.AddToFileWithoutCopy(Utility.GetFilePlace("PlaceNameList.txt"), Arrays.toString(placeNameList2.toArray()));
-////                        }
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-////                    Log.i("DEBUG", "ADD PLACE NAME TO LIST" + String.valueOf(place.getName()));
-////                    Log.i("DEBUG", "WTF" + Arrays.toString(placeNameList.toArray()));
-//                    places.close();
-//                }
-//            });
         }
-    }
+    }*/
+
 
     private ResultCallback<PlaceBuffer> mPlaceCallBack = new ResultCallback<PlaceBuffer>() {
         @Override
@@ -169,11 +160,13 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
                 return;
             }
             final Place place = places.get(0);
-            placeNameList.add(String.valueOf(place.getName()));
-            Log.i("ADD PLACE NAME TO LIST", String.valueOf(place.getName()));
+            // placeNameList.add(String.valueOf(place.getName())+"\n"+ String.valueOf(place.getAddress()));
+            adapter.insert(String.valueOf(place.getName()) + "\n" + String.valueOf(place.getAddress()), adapter.getCount());
+            Log.e("ADD PLACE NAME TO LIST", String.valueOf(place.getName()));
             places.close();
         }
     };
+
     /**
      * Listener that handles selections from suggestions from the AutoCompleteTextView that
      * displays Place suggestions.
@@ -204,8 +197,8 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
                     .getPlaceById(mGoogleApiClient, placeId);
             placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
 
-            Toast.makeText(getApplicationContext(), "Clicked: " + item.description,
-                    Toast.LENGTH_SHORT).show();
+            //  Toast.makeText(getApplicationContext(), "Clicked: " + item.description, Toast.LENGTH_SHORT).show();
+
 
             Log.i(TAG, "Called getPlaceById to get Place details for " + item.placeId);
         }
@@ -215,7 +208,8 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
      * Callback for results from a Places Geo Data API query that shows the first place result in
      * the details view on screen.
      */
-    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
+            = new ResultCallback<PlaceBuffer>() {
         @Override
         public void onResult(PlaceBuffer places) {
             if (!places.getStatus().isSuccess()) {
@@ -226,9 +220,11 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
             }
             // Get the Place object from the buffer.
             final Place place = places.get(0);
+
+
             String PlaceID = place.getId();
             Site currentSite = new Site(PlaceID);
-            siteDataSource.addSite(currentSite);
+            SiteSource.addSite(currentSite);
             String TripName = TripActivity.SelectedTripName;
             String UserID = User.getID(LoginActivity.getCurrentUser());
             String fileName = UserID + TripName + ".txt";
@@ -237,24 +233,28 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            mAutocompleteView.setText("");
             refreshSiteList();
 
-            // Format details of the place for display and show it in a TextView.
-            // mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(),
-            //      place.getId(), place.getAddress(), place.getPhoneNumber(),
-            //    place.getWebsiteUri()));
 
+            // Format details of the place for display and show it in a TextView.
+//            mPlaceDetailsText.setText(formatPlaceDetails(getResources(), place.getName(),
+//                    place.getId(), place.getAddress(), place.getPhoneNumber(),
+//                    place.getWebsiteUri()));
+//////TODO: save place
+
+            Log.i(TAG, "Place details received: " + place.getName());
         }
     };
 
-    private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id,
-                                              CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
-        Log.e(TAG, res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
-        return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
-                websiteUri));
-
-    }
+//    private static Spanned formatPlaceDetails(Resources res, CharSequence name, String id,
+//                                              CharSequence address, CharSequence phoneNumber, Uri websiteUri) {
+//        Log.e(TAG, res.getString(R.string.place_details, name, id, address, phoneNumber,
+//                websiteUri));
+//        return Html.fromHtml(res.getString(R.string.place_details, name, id, address, phoneNumber,
+//                websiteUri));
+//
+//    }
 
     /**
      * Construct a GoogleApiClient for the {@link Places#GEO_DATA_API} using AutoManage
@@ -292,7 +292,9 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
 
         // Disable API access in the adapter because the client was not initialised correctly.
         mAdapter.setGoogleApiClient(null);
+
     }
+
 
     @Override
     public void onConnected(Bundle bundle) {
@@ -315,8 +317,45 @@ public class TripDetailActivity extends FragmentActivity implements GoogleApiCli
         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
-    public void backToTrip(View v) {
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        AdapterView.AdapterContextMenuInfo pos = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        deletedSite = SiteSource.getSiteName(pos.position);
+        posPos = pos.position;
+
+        menu.add(1, 1, 1, "Delete");
+
+        menu.getItem(0).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem clickedItem) {
+                SiteSource.removeSite(posPos);
+                try {
+                    String fileName = User.getID(LoginActivity.getCurrentUser()) + TripActivity.SelectedTripName + ".txt";
+                    Utility.DeleteFromFile(Utility.GetFilePlace(fileName), deletedSite);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                refreshSiteList();
+                return true;
+            }
+        });
+
+    }
+
+    public void toTripActivity(View view) {
         Intent intent = new Intent(this, TripActivity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.back_in, R.anim.back_out);
     }
+
+    public void onBackPressed() {
+        Intent intent = new Intent(this, TripActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.back_in, R.anim.back_out);
+    }
+
+
 }

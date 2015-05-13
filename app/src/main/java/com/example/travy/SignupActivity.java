@@ -6,12 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.travy.model.DataSource;
+import com.example.travy.model.Trip;
 import com.example.travy.model.User;
 
 import java.io.BufferedWriter;
@@ -29,6 +32,8 @@ public class SignupActivity extends Activity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_signup);
+
+        setupUI(findViewById(R.id.signUpParent));
     }
 
     public void back(View view) {
@@ -48,6 +53,7 @@ public class SignupActivity extends Activity {
         Intent intent = new Intent(this, TripActivity.class);
         final Intent intent2 = new Intent(this, LoginActivity.class);
         EditText inputOfAdd = (EditText) findViewById(R.id.emailaddress);
+
         EditText inputOfPW = (EditText) findViewById(R.id.password);
         EditText inputOfFirstName = (EditText) findViewById(R.id.firstname);
         EditText inputOfLastName = (EditText) findViewById(R.id.lastname);
@@ -91,6 +97,7 @@ public class SignupActivity extends Activity {
                     .show();
         }
 
+
         if (NotExistSoGoOn) {
             id = (int) (Math.random() * 100);
 //        try {
@@ -122,6 +129,7 @@ public class SignupActivity extends Activity {
                         Toast.LENGTH_LONG).show();
             }
 
+
             //add the user
             File file;
             try {
@@ -136,8 +144,27 @@ public class SignupActivity extends Activity {
                         Toast.LENGTH_LONG).show();
             }
 
+
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
         }
     }
+
+    private void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void setupUI(View view) {
+        //Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(SignupActivity.this);
+                    return false;
+                }
+            });
+        }
+    }
+
 }

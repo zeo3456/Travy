@@ -1,10 +1,12 @@
 package com.example.travy;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Window;
 
+import com.example.travy.model.DataSource;
 import com.example.travy.model.Site;
 import com.example.travy.model.SiteSource;
 import com.google.android.gms.common.ConnectionResult;
@@ -22,8 +24,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import com.example.travy.model.DataSource;
 
 import java.util.ArrayList;
 
@@ -54,15 +54,15 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
         gotoLocation(coli_lat, coli_lng);
-        SiteSource siteDataSource = new SiteSource();
-        ArrayList<Site> theList = siteDataSource.returnList();
-        for(int i = 0; i< siteDataSource.getSize();i++){
-            placeIdList.add(theList.get(i).getPlaceId());
-        }
-//        placeIdList =
+//        placeIdList = new ArrayList<String>();
 //        placeIdList.add("ChIJ4zGFAZpYwokRGUGph3Mf37k");
 //        placeIdList.add("ChIJb8Jg9pZYwokR-qHGtvSkLzs");
 //        placeIdList.add("ChIJKxDbe_lYwokRVf__s8CPn-o");
+//        SiteSource siteDataSource = new SiteSource();
+        ArrayList<Site> theList = SiteSource.returnList();
+        for (int i = 0; i < SiteSource.getSize(); i++) {
+            placeIdList.add(theList.get(i).getPlaceId());
+        }
         mMap.setMyLocationEnabled(true);//the button that enables the current location
         mGoogleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, 0, this).addApi(Places.GEO_DATA_API).build();
         //Marker coli = mMap.addMarker(new MarkerOptions().position(COLI));
@@ -123,10 +123,11 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
             final Place place = places.get(0);
 
             // Format details of the place for display and show it in a TextView.
-            Marker cur = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(String.valueOf(place.getName())).snippet(String.valueOf(place.getAddress())));
+            Marker cur = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(String.valueOf(place.getName())).snippet(String.valueOf(place.getAddress())).icon(BitmapDescriptorFactory.fromResource(R.drawable.map_pin)));
+//////TODO: save place
             CameraUpdate update = CameraUpdateFactory.newLatLng(place.getLatLng());
             mMap.moveCamera(update);
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(13), 2000, null);
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
             //CameraPosition cameraPosition = new CameraPosition.Builder().target(place.getLatLng()).zoom(12).build();
             //mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             Log.i(TAG, "Place details received: " + place.getName());
@@ -203,9 +204,9 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
             mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
                     .getMap();
             // Check if we were successful in obtaining the map.
-            if (mMap != null) {
-                setUpMap();
-            }
+//            if (mMap != null) {
+//                setUpMap();
+//            }
         }
     }
 
@@ -229,6 +230,12 @@ public class MapsActivity extends FragmentActivity implements GoogleApiClient.On
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+
+    public void onBackPressed() {
+        Intent intent = new Intent(this, TripDetailActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.back_in, R.anim.back_out);
     }
 /*
     @Override

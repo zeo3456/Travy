@@ -1,23 +1,26 @@
 package com.example.travy;
 
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.view.View.OnClickListener;
 import android.widget.PopupWindow;
-import android.view.ViewGroup.LayoutParams;
 
 import com.example.travy.model.DataSource;
 import com.example.travy.model.Site;
@@ -51,6 +54,7 @@ public class TripActivity extends ListActivity {
 
         registerForContextMenu(getListView());
 
+        setupUI(findViewById(R.id.layout));
 
     }
 
@@ -83,10 +87,8 @@ public class TripActivity extends ListActivity {
 //        alert.show();
         final LayoutInflater layoutInflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
         final View popupView = layoutInflater.inflate(R.layout.new_trip, null);
+        setupUI(popupView);
         final PopupWindow popupWindow = new PopupWindow(popupView, LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-
-        popupWindow.setFocusable(true);
-        popupWindow.setOutsideTouchable(isRestricted());
 
         Button button_add = (Button) popupView.findViewById(R.id.button_add);
         Button button_close = (Button) popupView.findViewById(R.id.button_close);
@@ -114,14 +116,6 @@ public class TripActivity extends ListActivity {
                 popupWindow.dismiss();
             }
         });
-//        alert.wait();
-//        while(goOn[0]) {
-//            EditText inputofName = (EditText) findViewById(R.id.TPname);
-//            String myTripName = inputofName.getText().toString();
-//
-//            Log.i("SOS!", " " + myTripName);
-//            break;
-//        }
 
         button_close.setOnClickListener(new OnClickListener() {
             @Override
@@ -130,8 +124,14 @@ public class TripActivity extends ListActivity {
             }
         });
 
-        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+        popupWindow.setWidth(800);
+        popupWindow.setFocusable(true);
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());
+        popupWindow.setOutsideTouchable(true);
+
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, -100);
         popupWindow.update();
+
     }
 
     private void refreshDisplay() {
@@ -142,9 +142,9 @@ public class TripActivity extends ListActivity {
 
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        SiteSource st = new SiteSource();
-        if (st.getSize() != 0) {
-            st.clearSite();
+//        SiteSource st = new SiteSource();
+        if (SiteSource.getSize() != 0) {
+            SiteSource.clearSite();
         }
         //get the reference to the list item that is selected
         Trip trip = tripList.get(position);
@@ -167,11 +167,12 @@ public class TripActivity extends ListActivity {
             String[] EachTripInfo = EachTrip[i].split(" ");
             String SiteName = EachTripInfo[0].trim();
             Site t = new Site(SiteName);
-            st.addSite(t);
+            SiteSource.addSite(t);
         }
 
         Intent intent = new Intent(this, TripDetailActivity.class);
         startActivityForResult(intent, 1001);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
     }
 
     @Override
@@ -203,4 +204,33 @@ public class TripActivity extends ListActivity {
 
     }
 
+    public void toUserInfo(View view) {
+        Intent intent = new Intent(this, UserInfoActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
+
+    public void onBackPressed() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
+    private void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
+    }
+
+    public void setupUI(View view) {
+        //Set up touch listener for non-text box views to hide keyboard.
+        if (!(view instanceof EditText)) {
+            view.setOnTouchListener(new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                    hideSoftKeyboard(TripActivity.this);
+                    return false;
+                }
+            });
+        }
+    }
 }

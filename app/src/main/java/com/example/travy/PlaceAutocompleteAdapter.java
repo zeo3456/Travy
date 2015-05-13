@@ -68,8 +68,6 @@ public class PlaceAutocompleteAdapter
         } else {
             mGoogleApiClient = googleApiClient;
         }
-
-
     }
 
     /**
@@ -163,7 +161,6 @@ public class PlaceAutocompleteAdapter
 
             // Copy the results into our own data structure, because we can't hold onto the buffer.
             // AutocompletePrediction objects encapsulate the API response (place ID and description).
-
             Iterator<AutocompletePrediction> iterator = autocompletePredictions.iterator();
             ArrayList resultList = new ArrayList<>(autocompletePredictions.getCount());
             while (iterator.hasNext()) {
@@ -175,9 +172,9 @@ public class PlaceAutocompleteAdapter
 
             // Release the buffer now that all data has been copied.
             autocompletePredictions.release();
-
             return resultList;
         }
+
         Log.e(TAG, "Google API client is not connected for autocomplete query.");
         return null;
     }

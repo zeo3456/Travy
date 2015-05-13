@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class User {
+
     private static HashMap<String, String[]> ListOfUserName = new HashMap<String, String[]>();
 
     public static void addUser(String NewUserEmail, int id, String NewUserName, String PW) {

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="250dp"
+        android:gravity="center"
+        android:text="You are signed in as:"
+        android:textColor="#9B9B9B"
+        android:textSize="16dp"
+        android:typeface="normal" />
+
+    <TextView
+        android:id="@+id/userName"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp"
+        android:gravity="center"
+        android:textColor="#86929E"
+        android:textSize="25dp"
+        android:typeface="normal" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="566.67dp"
+        android:background="@android:color/darker_gray" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="516.67dp"
+        android:background="@android:color/darker_gray" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/divider2"
+        android:background="#00000000"
+        android:onClick="signOut"
+        android:text="Sign Out"
+        android:textColor="#9B9B9B"
+        android:textSize="16dp" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="12dp"
+        android:background="#00000000"
+        android:onClick="toTrip"
+        android:src="@drawable/travygrey" />
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/divider"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="12dp"
+        android:background="#00000000"
+        android:src="@drawable/useryellow" />
+
+</RelativeLayout>

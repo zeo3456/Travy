@@ -3,14 +3,14 @@
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/button"
+    android:background="@drawable/popupwindow"
     android:orientation="vertical">
 
     <EditText
         android:id="@+id/TPname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Moon"></EditText>
+        android:hint="Name of your trip"></EditText>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -18,18 +18,21 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/button_add"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="ADD"></Button>
-
-        <Button
             android:id="@+id/button_close"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="CLOSE"></Button>
+            android:background="#00000000"
+            android:text="Cancel"></Button>
+
+        <Button
+            android:id="@+id/button_add"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:text="Confirm"></Button>
+
 
     </LinearLayout>
 

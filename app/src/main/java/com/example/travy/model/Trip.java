@@ -3,6 +3,7 @@ package com.example.travy.model;
 import java.util.ArrayList;
 
 public class Trip {
+
     private int id;
 
     private String title;
@@ -26,4 +27,5 @@ public class Trip {
     public String toString() {
         return title;
     }
+
 }

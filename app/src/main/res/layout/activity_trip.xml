@@ -1,73 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/relativeLayout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="2.5dip">
+        android:orientation="horizontal">
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Trips"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_vertical|center_horizontal|right"
-            android:orientation="horizontal">
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="20dp"
+            android:background="#00000000"
+            android:onClick="showPopWindow"
+            android:src="@drawable/plus" />
 
-            <Button
-                android:id="@+id/button_new"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dip"
-                android:onClick="showPopWindow"
-                android:text="NEW" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:text="Upcoming trip:"
+            android:textColor="#9B9B9B"
+            android:textSize="16dp"
+            android:typeface="normal" />
 
-        </LinearLayout>
-
-    </LinearLayout>
+    </RelativeLayout>
 
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:longClickable="true"/>
+        android:layout_below="@+id/relativeLayout"
+        android:longClickable="true" />
 
-    <LinearLayout
+    <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center|bottom"
-        android:orientation="horizontal">
+        android:layout_height="1dp"
+        android:layout_marginTop="566.67dp"
+        android:background="@android:color/darker_gray" />
 
-        <Button
-            android:id="@+id/button_trip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="goToTrip" />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/divider"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="12dp"
+        android:background="#00000000"
+        android:src="@drawable/travyyellow" />
 
-        <Button
-            android:id="@+id/button_userinfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="goToInfo" />
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/divider"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="12dp"
+        android:background="#00000000"
+        android:onClick="toUserInfo"
+        android:src="@drawable/usergrey" />
 
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

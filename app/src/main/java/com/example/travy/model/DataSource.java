@@ -4,33 +4,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataSource {
+
     static List<Trip> triplist = new ArrayList<Trip>();
 
     public static boolean getSize() {
         return triplist.isEmpty();
     }
 
-    public static void removeTrip(int pos){
-        triplist.remove(pos);
-    }
     public static void clearTrip() {
         triplist = new ArrayList<Trip>();
+    }
+
+    public static void removeTrip(int pos) {
+        triplist.remove(pos);
+    }
+
+    public static String getTripName(int pos) {
+        return triplist.get(pos).getTitle();
     }
 
     public static void addtrip(Trip e) {
         triplist.add(e);
     }
-    public static String getTripName(int pos){
-        return triplist.get(pos).getTitle();
-    }
 
     public List<Trip> findAllTrip() {
-
-//        Trip t1 = new Trip(1, "New York City");
-//        Trip t2 = new Trip(2, "Beijing");
-
-//        triplist.add(t1);
-//        triplist.add(t2);
         return triplist;
     }
 
@@ -38,4 +35,5 @@ public class DataSource {
     public void remove(Trip trip) {
         triplist.remove(trip);
     }
+
 }

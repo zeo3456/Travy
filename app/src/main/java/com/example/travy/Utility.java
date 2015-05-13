@@ -1,11 +1,5 @@
 package com.example.travy;
-
 import android.os.Environment;
-import android.util.Log;
-
-import com.example.travy.model.Site;
-import com.example.travy.model.SiteSource;
-import com.example.travy.model.User;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -88,10 +82,10 @@ public class Utility {
 //            String line = in.nextLine();
 //            toPrint += (line + " & ");
 //        }
-    boolean goOn = true;
+        boolean goOn = true;
         String info = Utility.GetAllInfoFromFile(file);
         String info2 = info;
-       String[] info2Split = info2.split(" ");
+        String[] info2Split = info2.split(" ");
         if(info2Split.length == 2){
             goOn = false;
             String toDelete = UserID + " " + TripName;
@@ -110,6 +104,46 @@ public class Utility {
                 info = info.replace(toDelete, "");
             } else {
                 String toDelete = " & " + UserID + " " + TripName;
+                info = info.replace(toDelete, "");
+            }
+//            Log.i("DDDD!", info);
+//        for (int i = 0; i < EachTrip.length; i++) {
+//            if (EachTrip[i].trim().isEmpty()) continue;
+//            String[] EachTripDetail = EachTrip[i].split(" ");
+//
+//        }
+
+//        toPrint += toAdd;
+        }
+        FileWriter filewriter = new FileWriter(file);
+        BufferedWriter out = new BufferedWriter(filewriter);
+        out.write(info.trim());
+        out.close();
+
+        return true;
+    }
+    public static boolean DeleteFromFile(File file, String UserID) throws IOException {
+
+        boolean goOn = true;
+        String info = Utility.GetAllInfoFromFile(file);
+        String info2 = info;
+        String[] info2Split = info2.split(" ");
+        if(info2Split.length == 1){
+            goOn = false;
+            String toDelete = UserID;
+            info = info.replace(toDelete, "");
+
+        }
+        if(goOn) {
+
+            String[] EachTrip = info.split(" & ");
+            String[] FirstItem = EachTrip[0].split(" ");
+
+            if (FirstItem[0].equals(UserID)) {
+                String toDelete = UserID + " & ";
+                info = info.replace(toDelete, "");
+            } else {
+                String toDelete = " & " + UserID;
                 info = info.replace(toDelete, "");
             }
 //            Log.i("DDDD!", info);

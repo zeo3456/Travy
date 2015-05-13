@@ -1,53 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout001"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/relativeLayout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal|center_vertical"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="2.5dip">
+        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/button_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
-            android:onClick="backToTrip"
-            android:text="BACK" />
-
-        <TextView
+        <AutoCompleteTextView
+            android:id="@+id/autocomplete_places"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="Trip Detail"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="15dp"
+            android:layout_toLeftOf="@+id/button2"
+            android:layout_toRightOf="@+id/button1"
+            android:hint="Where do you want to travel?"
+            android:textColor="@android:color/primary_text_light"
+            android:textSize="12.67dp" />
 
-
-        <Button
-            android:id="@+id/button_map"
+        <ImageButton
+            android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:background="#00000000"
+            android:onClick="toTripActivity"
+            android:src="@drawable/arrowleft" />
+
+        <ImageButton
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginTop="20dp"
+            android:background="#00000000"
             android:onClick="toMap"
-            android:text="MAP" />
+            android:src="@drawable/mapbutton" />
 
-
-    </LinearLayout>
-
-
-    <AutoCompleteTextView
-        android:id="@+id/autocomplete_places"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@android:color/primary_text_light" />
+    </RelativeLayout>
 
     <!--<TextView-->
     <!--android:id="@+id/place_details"-->
@@ -68,5 +66,9 @@
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/relativeLayout"
+        android:longClickable="true" />
+
+
 </LinearLayout>
